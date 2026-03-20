@@ -3,570 +3,208 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>WebTrack — Page de démonstration</title>
-  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet"/>
-  <style>
-    :root {
-      --bg: #0a0a0f;
-      --fg: #e8e4d9;
-      --accent: #00ff87;
-      --accent2: #ff3d6e;
-      --muted: #3a3a4a;
-      --card: #12121a;
-    }
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body {
-      background: var(--bg);
-      color: var(--fg);
-      font-family: 'Syne', sans-serif;
-      cursor: none;
-      min-height: 100vh;
-    }
-
-    /* Custom cursor */
-    #cursor {
-      position: fixed;
-      width: 12px; height: 12px;
-      background: var(--accent);
-      border-radius: 50%;
-      pointer-events: none;
-      z-index: 9999;
-      transform: translate(-50%, -50%);
-      transition: transform 0.1s, background 0.2s;
-      mix-blend-mode: screen;
-    }
-    #cursor.click { transform: translate(-50%, -50%) scale(2.5); background: var(--accent2); }
-
-    /* Notification toast */
-    #toast {
-      position: fixed;
-      bottom: 2rem; right: 2rem;
-      background: var(--card);
-      border: 1px solid var(--accent);
-      color: var(--accent);
-      font-family: 'Space Mono', monospace;
-      font-size: 0.72rem;
-      padding: 0.6rem 1rem;
-      border-radius: 4px;
-      z-index: 9998;
-      opacity: 0;
-      transform: translateY(10px);
-      transition: opacity 0.3s, transform 0.3s;
-      max-width: 280px;
-    }
-    #toast.show { opacity: 1; transform: translateY(0); }
-
-    /* Scroll progress bar */
-    #scroll-bar {
-      position: fixed;
-      top: 0; left: 0;
-      height: 3px;
-      background: var(--accent);
-      z-index: 9997;
-      width: 0%;
-      transition: width 0.1s;
-    }
-
-    /* NAV */
-    nav {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 1.5rem 3rem;
-      border-bottom: 1px solid var(--muted);
-      position: sticky;
-      top: 0;
-      background: rgba(10,10,15,0.92);
-      backdrop-filter: blur(12px);
-      z-index: 100;
-    }
-    .logo {
-      font-size: 1.2rem;
-      font-weight: 800;
-      letter-spacing: -0.02em;
-    }
-    .logo span { color: var(--accent); }
-    nav a {
-      color: var(--fg);
-      text-decoration: none;
-      font-size: 0.85rem;
-      opacity: 0.6;
-      transition: opacity 0.2s;
-      margin-left: 2rem;
-    }
-    nav a:hover { opacity: 1; color: var(--accent); }
-    .dashboard-btn {
-      background: var(--accent);
-      color: var(--bg) !important;
-      padding: 0.4rem 1rem;
-      border-radius: 4px;
-      font-weight: 700;
-      opacity: 1 !important;
-      font-size: 0.8rem;
-    }
-    .dashboard-btn:hover { background: #00e07a !important; }
-
-    /* HERO */
-    .hero {
-      padding: 7rem 3rem 5rem;
-      max-width: 900px;
-    }
-    .hero-tag {
-      font-family: 'Space Mono', monospace;
-      font-size: 0.7rem;
-      letter-spacing: 0.2em;
-      color: var(--accent);
-      text-transform: uppercase;
-      margin-bottom: 1.5rem;
-    }
-    h1 {
-      font-size: clamp(2.5rem, 7vw, 5rem);
-      font-weight: 800;
-      line-height: 1.05;
-      letter-spacing: -0.03em;
-      margin-bottom: 1.5rem;
-    }
-    h1 em { color: var(--accent); font-style: normal; }
-    .hero p {
-      font-size: 1.1rem;
-      opacity: 0.7;
-      max-width: 520px;
-      line-height: 1.7;
-      margin-bottom: 2.5rem;
-    }
-    .cta-row { display: flex; gap: 1rem; flex-wrap: wrap; }
-    .btn {
-      padding: 0.85rem 2rem;
-      border-radius: 6px;
-      font-family: 'Syne', sans-serif;
-      font-weight: 700;
-      font-size: 0.9rem;
-      cursor: none;
-      transition: transform 0.15s, box-shadow 0.15s;
-      text-decoration: none;
-      display: inline-block;
-    }
-    .btn:hover { transform: translateY(-2px); }
-    .btn-primary {
-      background: var(--accent);
-      color: var(--bg);
-    }
-    .btn-primary:hover { box-shadow: 0 0 20px rgba(0,255,135,0.4); }
-    .btn-outline {
-      border: 1px solid var(--muted);
-      color: var(--fg);
-    }
-    .btn-outline:hover { border-color: var(--fg); }
-
-    /* STATS STRIP */
-    .stats-strip {
-      display: flex;
-      gap: 0;
-      border-top: 1px solid var(--muted);
-      border-bottom: 1px solid var(--muted);
-      margin: 0 0 5rem;
-      overflow: hidden;
-    }
-    .stat-item {
-      flex: 1;
-      padding: 2rem 3rem;
-      border-right: 1px solid var(--muted);
-    }
-    .stat-item:last-child { border-right: none; }
-    .stat-num {
-      font-family: 'Space Mono', monospace;
-      font-size: 2rem;
-      font-weight: 700;
-      color: var(--accent);
-      display: block;
-      margin-bottom: 0.3rem;
-    }
-    .stat-label {
-      font-size: 0.8rem;
-      opacity: 0.5;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-    }
-
-    /* CONTENT SECTIONS */
-    .section {
-      padding: 5rem 3rem;
-      border-bottom: 1px solid var(--muted);
-    }
-    .section-tag {
-      font-family: 'Space Mono', monospace;
-      font-size: 0.65rem;
-      letter-spacing: 0.2em;
-      color: var(--accent2);
-      text-transform: uppercase;
-      margin-bottom: 1rem;
-    }
-    h2 {
-      font-size: 2.2rem;
-      font-weight: 800;
-      letter-spacing: -0.02em;
-      margin-bottom: 1rem;
-    }
-    .section > p {
-      opacity: 0.65;
-      line-height: 1.8;
-      max-width: 600px;
-      margin-bottom: 2.5rem;
-    }
-
-    /* CARDS */
-    .cards {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-      gap: 1.5rem;
-    }
-    .card {
-      background: var(--card);
-      border: 1px solid var(--muted);
-      border-radius: 8px;
-      padding: 2rem;
-      transition: border-color 0.2s, transform 0.2s;
-    }
-    .card:hover { border-color: var(--accent); transform: translateY(-3px); }
-    .card-icon {
-      font-size: 1.8rem;
-      margin-bottom: 1rem;
-    }
-    .card h3 { font-size: 1rem; font-weight: 700; margin-bottom: 0.5rem; }
-    .card p { font-size: 0.85rem; opacity: 0.6; line-height: 1.6; }
-
-    /* LONG TEXT SECTION */
-    .prose-section {
-      padding: 5rem 3rem;
-      border-bottom: 1px solid var(--muted);
-      max-width: 720px;
-    }
-    .prose-section h2 { margin-bottom: 1.5rem; }
-    .prose-section p {
-      opacity: 0.7;
-      line-height: 1.9;
-      margin-bottom: 1.2rem;
-      font-size: 1rem;
-    }
-
-    /* FORM SECTION */
-    .form-section {
-      padding: 5rem 3rem;
-      border-bottom: 1px solid var(--muted);
-    }
-    .form-wrap { max-width: 480px; margin-top: 2rem; }
-    .form-group { margin-bottom: 1.5rem; }
-    label {
-      display: block;
-      font-size: 0.8rem;
-      letter-spacing: 0.05em;
-      margin-bottom: 0.5rem;
-      opacity: 0.7;
-      text-transform: uppercase;
-      font-family: 'Space Mono', monospace;
-    }
-    input, textarea, select {
-      width: 100%;
-      background: var(--card);
-      border: 1px solid var(--muted);
-      color: var(--fg);
-      padding: 0.75rem 1rem;
-      border-radius: 6px;
-      font-family: 'Syne', sans-serif;
-      font-size: 0.95rem;
-      outline: none;
-      transition: border-color 0.2s;
-    }
-    input:focus, textarea:focus, select:focus { border-color: var(--accent); }
-    textarea { resize: vertical; min-height: 100px; }
-    select option { background: var(--bg); }
-
-    /* FOOTER */
-    footer {
-      padding: 3rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      opacity: 0.4;
-      font-family: 'Space Mono', monospace;
-      font-size: 0.7rem;
-    }
-
-    /* Tracked click dots */
-    .click-dot {
-      position: fixed;
-      width: 6px; height: 6px;
-      background: var(--accent2);
-      border-radius: 50%;
-      pointer-events: none;
-      transform: translate(-50%, -50%);
-      z-index: 9995;
-      animation: dotfade 1.2s forwards;
-    }
-    @keyframes dotfade {
-      0% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-      100% { opacity: 0; transform: translate(-50%, -50%) scale(3); }
-    }
-  </style>
+  <title>Atelier Forma — Studio de design</title>
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
 </head>
 <body>
 
-<div id="cursor"></div>
-<div id="scroll-bar"></div>
-<div id="toast"></div>
+  <!-- NAV -->
+  <nav>
+    <div class="nav-logo">Atelier<em>Forma</em></div>
+    <ul class="nav-links">
+      <li><a href="#">Studio</a></li>
+      <li><a href="#">Projets</a></li>
+      <li><a href="#">Contact</a></li>
+    </ul>
+  </nav>
 
-<!-- NAV -->
-<nav>
-  <div class="logo">Web<span>Track</span></div>
-  <div>
-    <a href="#">Accueil</a>
-    <a href="#">À propos</a>
-    <a href="#">Contact</a>
-    <a href="dashboard.html" class="dashboard-btn">📊 Dashboard</a>
-  </div>
-</nav>
-
-<!-- HERO -->
-<section class="hero">
-  <div class="hero-tag">// Page de démonstration — tout est tracké</div>
-  <h1>Interagis.<br/>Chaque action<br/>est <em>enregistrée</em>.</h1>
-  <p>Cette page est un terrain d'entraînement au web tracking. Clique, scroll, visite des sections — tout est capturé et consultable dans le dashboard.</p>
-  <div class="cta-row">
-    <a href="dashboard.html" class="btn btn-primary">Voir le dashboard →</a>
-    <a href="#features" class="btn btn-outline">Explorer la page ↓</a>
-  </div>
-</section>
-
-<!-- STATS STRIP -->
-<div class="stats-strip">
-  <div class="stat-item">
-    <span class="stat-num" id="stat-clicks">0</span>
-    <span class="stat-label">Clics cette session</span>
-  </div>
-  <div class="stat-item">
-    <span class="stat-num" id="stat-scroll">0%</span>
-    <span class="stat-label">Profondeur scroll max</span>
-  </div>
-  <div class="stat-item">
-    <span class="stat-num" id="stat-time">0s</span>
-    <span class="stat-label">Temps sur la page</span>
-  </div>
-  <div class="stat-item">
-    <span class="stat-num" id="stat-sections">0</span>
-    <span class="stat-label">Sections vues</span>
-  </div>
-</div>
-
-<!-- FEATURES -->
-<section class="section" id="features" data-section="features">
-  <div class="section-tag">// 01 — Fonctionnalités</div>
-  <h2>Ce que tu peux tracker</h2>
-  <p>Chaque interaction génère un événement structuré avec timestamp, coordonnées et contexte. Les données sont stockées localement dans ton navigateur.</p>
-  <div class="cards">
-    <div class="card" data-card="clicks">
-      <div class="card-icon">🖱️</div>
-      <h3>Clics</h3>
-      <p>Position X/Y, élément ciblé, timestamp précis, profondeur dans le DOM.</p>
+  <!-- HERO -->
+  <header class="hero">
+    <div class="hero-text">
+      <span class="hero-tag">Studio de design — Paris</span>
+      <h1>Nous façonnons<br/><em>des expériences</em><br/>mémorables.</h1>
+      <p>Un atelier indépendant spécialisé en identité visuelle, direction artistique et design digital.</p>
+      <button class="btn-primary" onclick="openModal('modal-studio')">En savoir plus</button>
     </div>
-    <div class="card" data-card="scroll">
-      <div class="card-icon">📜</div>
-      <h3>Scroll</h3>
-      <p>Profondeur maximale atteinte, vitesse de défilement, direction.</p>
+    <div class="hero-visual">
+      <div class="shape shape-1"></div>
+      <div class="shape shape-2"></div>
+      <div class="shape shape-3"></div>
     </div>
-    <div class="card" data-card="pageview">
-      <div class="card-icon">👁️</div>
-      <h3>Pages vues</h3>
-      <p>URL, referrer, heure d'arrivée, résolution d'écran, langue du navigateur.</p>
+  </header>
+
+  <!-- SERVICES -->
+  <section class="services">
+    <div class="section-header">
+      <span class="section-tag">// Ce que nous faisons</span>
+      <h2>Nos expertises</h2>
     </div>
-    <div class="card" data-card="sections">
-      <div class="card-icon">📐</div>
-      <h3>Sections vues</h3>
-      <p>Détection via IntersectionObserver de chaque section visible à l'écran.</p>
+    <div class="services-grid">
+
+      <div class="service-card">
+        <div class="service-num">01</div>
+        <h3>Identité visuelle</h3>
+        <p>Logo, charte graphique, système de design — une identité qui dure et qui raconte votre histoire.</p>
+        <button class="btn-learn" onclick="openModal('modal-identite')">En savoir plus →</button>
+      </div>
+
+      <div class="service-card">
+        <div class="service-num">02</div>
+        <h3>Direction artistique</h3>
+        <p>Shootings, campagnes, contenus visuels — une cohérence à chaque prise de parole.</p>
+        <button class="btn-learn" onclick="openModal('modal-da')">En savoir plus →</button>
+      </div>
+
+      <div class="service-card">
+        <div class="service-num">03</div>
+        <h3>Design digital</h3>
+        <p>Interfaces web et mobile pensées pour l'usage, conçues pour l'émotion.</p>
+        <button class="btn-learn" onclick="openModal('modal-digital')">En savoir plus →</button>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- CHIFFRES -->
+  <section class="numbers">
+    <div class="number-item">
+      <span class="number-val">12</span>
+      <span class="number-label">Ans d'expérience</span>
+    </div>
+    <div class="number-divider"></div>
+    <div class="number-item">
+      <span class="number-val">200+</span>
+      <span class="number-label">Projets livrés</span>
+    </div>
+    <div class="number-divider"></div>
+    <div class="number-item">
+      <span class="number-val">40</span>
+      <span class="number-label">Clients actifs</span>
+    </div>
+    <div class="number-divider"></div>
+    <div class="number-item">
+      <span class="number-val">8</span>
+      <span class="number-label">Prix reçus</span>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta-band">
+    <h2>Un projet en tête ?</h2>
+    <p>Parlons-en autour d'un café — réel ou virtuel.</p>
+    <a href="mailto:hello@atelierforma.fr" class="btn-primary">Nous contacter</a>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-logo">Atelier<em>Forma</em></div>
+    <p class="footer-copy">© 2025 — Paris, France</p>
+  </footer>
+
+  <!-- ═══════════ POP-INS ═══════════ -->
+
+  <!-- Modal : Studio -->
+  <div class="modal-overlay" id="modal-studio" role="dialog" aria-modal="true" aria-labelledby="ms-title">
+    <div class="modal">
+      <button class="modal-close" onclick="closeModal('modal-studio')" aria-label="Fermer">✕</button>
+      <div class="modal-tag">Notre histoire</div>
+      <h2 id="ms-title">Le studio</h2>
+      <p>Fondé en 2013 par deux designers issus des Beaux-Arts de Paris, Atelier Forma est un studio indépendant qui croit que le design est avant tout une conversation entre une marque et ses publics.</p>
+      <p>Nous travaillons en petit comité — jamais plus de trois projets simultanés — pour garantir une attention totale à chaque client.</p>
+      <ul class="modal-list">
+        <li>Studio fondé à Paris en 2013</li>
+        <li>Équipe de 6 designers permanents</li>
+        <li>Clients : startups, institutions, marques de luxe</li>
+        <li>Membres de l'Alliance Française des Designers</li>
+      </ul>
+      <button class="btn-primary" onclick="closeModal('modal-studio')">Fermer</button>
     </div>
   </div>
-</section>
 
-<!-- PROSE SECTION -->
-<section class="prose-section" id="about" data-section="about">
-  <div class="section-tag">// 02 — À propos du tracking</div>
-  <h2>Comment ça fonctionne ?</h2>
-  <p>Le web tracking consiste à intercepter les événements natifs du navigateur — <code>click</code>, <code>scroll</code>, <code>visibilitychange</code> — pour construire une représentation du comportement utilisateur.</p>
-  <p>Dans une implémentation réelle, ces données sont envoyées vers un serveur via des requêtes <code>fetch</code> ou <code>beacon</code>. Ici, elles sont stockées dans le <code>localStorage</code> pour rester 100% local et sans serveur.</p>
-  <p>Le dashboard te permet de rejouer ta session, visualiser les zones de clic, et analyser la profondeur de scroll — exactement comme le font des outils comme Hotjar, Mixpanel ou Plausible.</p>
-</section>
-
-<!-- FORM SECTION -->
-<section class="form-section" id="contact" data-section="contact">
-  <div class="section-tag">// 03 — Interaction simulée</div>
-  <h2>Formulaire de test</h2>
-  <p style="opacity:0.6; margin-bottom: 0; line-height:1.7;">Interagis avec ce formulaire — chaque focus et clic est tracké.</p>
-  <div class="form-wrap">
-    <div class="form-group">
-      <label>Nom</label>
-      <input type="text" placeholder="Jean Dupont" />
+  <!-- Modal : Identité -->
+  <div class="modal-overlay" id="modal-identite" role="dialog" aria-modal="true" aria-labelledby="mi-title">
+    <div class="modal">
+      <button class="modal-close" onclick="closeModal('modal-identite')" aria-label="Fermer">✕</button>
+      <div class="modal-tag">Expertise 01</div>
+      <h2 id="mi-title">Identité visuelle</h2>
+      <p>Une identité visuelle forte est le socle de toute communication de marque. Nous construisons des systèmes visuels durables, cohérents sur tous les supports.</p>
+      <ul class="modal-list">
+        <li>Création de logo & déclinaisons</li>
+        <li>Charte graphique complète</li>
+        <li>Système typographique & palette couleurs</li>
+        <li>Guidelines d'utilisation</li>
+        <li>Application sur supports imprimés</li>
+      </ul>
+      <p class="modal-pricing">À partir de <strong>3 500 €</strong> HT</p>
+      <button class="btn-primary" onclick="closeModal('modal-identite')">Fermer</button>
     </div>
-    <div class="form-group">
-      <label>Email</label>
-      <input type="email" placeholder="jean@exemple.fr" />
-    </div>
-    <div class="form-group">
-      <label>Sujet</label>
-      <select>
-        <option>Tracking analytics</option>
-        <option>UX Research</option>
-        <option>Autre</option>
-      </select>
-    </div>
-    <div class="form-group">
-      <label>Message</label>
-      <textarea placeholder="Votre message ici..."></textarea>
-    </div>
-    <button class="btn btn-primary" style="width:100%;" onclick="return false;">Envoyer (simulé)</button>
   </div>
-</section>
 
-<!-- FOOTER -->
-<footer>
-  <span>WebTrack — Entraînement au web tracking</span>
-  <span>Toutes les données restent dans ton navigateur</span>
-</footer>
+  <!-- Modal : DA -->
+  <div class="modal-overlay" id="modal-da" role="dialog" aria-modal="true" aria-labelledby="mda-title">
+    <div class="modal">
+      <button class="modal-close" onclick="closeModal('modal-da')" aria-label="Fermer">✕</button>
+      <div class="modal-tag">Expertise 02</div>
+      <h2 id="mda-title">Direction artistique</h2>
+      <p>La direction artistique, c'est l'art de donner une vision unifiée à l'ensemble des prises de parole d'une marque. Nous orchestrons votre univers visuel de bout en bout.</p>
+      <ul class="modal-list">
+        <li>Conception de moodboards & références</li>
+        <li>Direction de shootings photo & vidéo</li>
+        <li>Cohérence des campagnes publicitaires</li>
+        <li>Suivi éditorial des réseaux sociaux</li>
+      </ul>
+      <p class="modal-pricing">Sur devis selon périmètre</p>
+      <button class="btn-primary" onclick="closeModal('modal-da')">Fermer</button>
+    </div>
+  </div>
 
-<script>
-// ─── STORAGE ────────────────────────────────────────────────────
-const STORE_KEY = 'webtrack_events';
+  <!-- Modal : Digital -->
+  <div class="modal-overlay" id="modal-digital" role="dialog" aria-modal="true" aria-labelledby="mdig-title">
+    <div class="modal">
+      <button class="modal-close" onclick="closeModal('modal-digital')" aria-label="Fermer">✕</button>
+      <div class="modal-tag">Expertise 03</div>
+      <h2 id="mdig-title">Design digital</h2>
+      <p>Sites web, applications mobiles, interfaces SaaS — nous concevons des expériences numériques qui allient clarté d'usage et identité forte. Livré en Figma, prêt pour les développeurs.</p>
+      <ul class="modal-list">
+        <li>UX Research & wireframing</li>
+        <li>UI Design haute fidélité (Figma)</li>
+        <li>Design system & composants</li>
+        <li>Prototypage interactif</li>
+        <li>Accompagnement développeurs</li>
+      </ul>
+      <p class="modal-pricing">À partir de <strong>4 800 €</strong> HT</p>
+      <button class="btn-primary" onclick="closeModal('modal-digital')">Fermer</button>
+    </div>
+  </div>
 
-function loadEvents() {
-  try { return JSON.parse(localStorage.getItem(STORE_KEY)) || []; }
-  catch { return []; }
-}
-function saveEvent(event) {
-  const events = loadEvents();
-  events.push(event);
-  localStorage.setItem(STORE_KEY, JSON.stringify(events));
-}
-function baseEvent(type) {
-  return { type, ts: Date.now(), url: location.href };
-}
-
-// ─── CURSOR ─────────────────────────────────────────────────────
-const cursor = document.getElementById('cursor');
-document.addEventListener('mousemove', e => {
-  cursor.style.left = e.clientX + 'px';
-  cursor.style.top = e.clientY + 'px';
-});
-
-// ─── TOAST ──────────────────────────────────────────────────────
-const toast = document.getElementById('toast');
-let toastTimer;
-function showToast(msg) {
-  toast.textContent = msg;
-  toast.classList.add('show');
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => toast.classList.remove('show'), 2200);
-}
-
-// ─── PAGE VIEW ──────────────────────────────────────────────────
-const pvEvent = { ...baseEvent('pageview'),
-  referrer: document.referrer || 'direct',
-  screen: `${screen.width}x${screen.height}`,
-  lang: navigator.language
-};
-saveEvent(pvEvent);
-showToast(`👁️ Page vue enregistrée`);
-
-// ─── TIME ON PAGE ───────────────────────────────────────────────
-const pageStart = Date.now();
-const timeEl = document.getElementById('stat-time');
-setInterval(() => {
-  const s = Math.floor((Date.now() - pageStart) / 1000);
-  timeEl.textContent = s < 60 ? s + 's' : Math.floor(s/60) + 'm' + (s%60) + 's';
-}, 1000);
-
-// ─── CLICKS ─────────────────────────────────────────────────────
-let clickCount = 0;
-const clicksEl = document.getElementById('stat-clicks');
-
-document.addEventListener('click', e => {
-  if (e.target.closest('a[href="dashboard.html"]')) return;
-
-  clickCount++;
-  clicksEl.textContent = clickCount;
-
-  cursor.classList.add('click');
-  setTimeout(() => cursor.classList.remove('click'), 200);
-
-  // Dot visual
-  const dot = document.createElement('div');
-  dot.className = 'click-dot';
-  dot.style.left = e.clientX + 'px';
-  dot.style.top = e.clientY + 'px';
-  document.body.appendChild(dot);
-  setTimeout(() => dot.remove(), 1200);
-
-  const tag = e.target.tagName.toLowerCase();
-  const label = e.target.textContent?.trim().slice(0, 40) || '';
-  const ev = { ...baseEvent('click'),
-    x: e.clientX, y: e.clientY,
-    scrollY: window.scrollY,
-    target: tag,
-    label,
-    id: e.target.id || null,
-    classes: e.target.className || null
-  };
-  saveEvent(ev);
-  showToast(`🖱️ Clic sur <${tag}> ${label ? '"' + label + '"' : ''}`);
-});
-
-// ─── SCROLL ─────────────────────────────────────────────────────
-let maxScroll = 0;
-const scrollBar = document.getElementById('scroll-bar');
-const scrollEl = document.getElementById('stat-scroll');
-let scrollSaveTimer;
-
-function getScrollPct() {
-  const h = document.documentElement.scrollHeight - window.innerHeight;
-  return h <= 0 ? 100 : Math.round((window.scrollY / h) * 100);
-}
-
-window.addEventListener('scroll', () => {
-  const pct = getScrollPct();
-  scrollBar.style.width = pct + '%';
-  if (pct > maxScroll) {
-    maxScroll = pct;
-    scrollEl.textContent = pct + '%';
-  }
-  clearTimeout(scrollSaveTimer);
-  scrollSaveTimer = setTimeout(() => {
-    saveEvent({ ...baseEvent('scroll'), depth_pct: pct, max_depth_pct: maxScroll });
-  }, 500);
-}, { passive: true });
-
-// ─── SECTIONS VUES ──────────────────────────────────────────────
-const seenSections = new Set();
-const sectionsEl = document.getElementById('stat-sections');
-
-const observer = new IntersectionObserver(entries => {
-  entries.forEach(e => {
-    if (e.isIntersecting && !seenSections.has(e.target.dataset.section)) {
-      const name = e.target.dataset.section;
-      seenSections.add(name);
-      sectionsEl.textContent = seenSections.size;
-      saveEvent({ ...baseEvent('section_view'), section: name });
-      showToast(`📐 Section "${name}" vue`);
+  <script>
+    function openModal(id) {
+      const overlay = document.getElementById(id);
+      overlay.classList.add('active');
+      document.body.classList.add('no-scroll');
+      overlay.querySelector('.modal-close').focus();
     }
-  });
-}, { threshold: 0.3 });
 
-document.querySelectorAll('[data-section]').forEach(el => observer.observe(el));
+    function closeModal(id) {
+      document.getElementById(id).classList.remove('active');
+      document.body.classList.remove('no-scroll');
+    }
 
-// ─── SAVE ON LEAVE ───────────────────────────────────────────────
-window.addEventListener('beforeunload', () => {
-  saveEvent({ ...baseEvent('page_leave'),
-    time_on_page_ms: Date.now() - pageStart,
-    max_scroll_pct: maxScroll,
-    clicks: clickCount
-  });
-});
-</script>
+    // Clic sur l'overlay = fermeture
+    document.querySelectorAll('.modal-overlay').forEach(overlay => {
+      overlay.addEventListener('click', function(e) {
+        if (e.target === this) closeModal(this.id);
+      });
+    });
+
+    // Touche Échap = fermeture
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') {
+        document.querySelectorAll('.modal-overlay.active').forEach(o => closeModal(o.id));
+      }
+    });
+  </script>
+
 </body>
 </html>

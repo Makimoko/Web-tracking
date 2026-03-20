@@ -439,6 +439,116 @@ footer {
 
 .modal-pricing strong { color: var(--fg); }
 
+/* ─── MODAL WIDE (studio photo) ────── */
+.modal-wide { max-width: 680px; }
+
+.modal-photo-wrap {
+  margin: -3rem -3rem 2rem;
+  position: relative;
+  overflow: hidden;
+  border-radius: 4px 4px 0 0;
+  height: 260px;
+}
+
+.modal-photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.5s ease;
+}
+
+.modal-photo:hover { transform: scale(1.03); }
+
+.modal-photo-caption {
+  position: absolute;
+  bottom: 0.6rem;
+  right: 0.8rem;
+  font-size: 0.62rem;
+  color: rgba(255,255,255,0.6);
+  font-family: 'DM Sans', sans-serif;
+}
+
+/* ─── FORMULAIRE CONTACT ────────────── */
+.form-group {
+  margin-bottom: 1.3rem;
+}
+
+.form-group label {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  color: var(--fg);
+  margin-bottom: 0.4rem;
+  text-transform: uppercase;
+}
+
+.required { color: var(--accent); }
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  background: var(--bg);
+  border: 1.5px solid var(--border);
+  color: var(--fg);
+  padding: 0.72rem 1rem;
+  border-radius: 2px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.95rem;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  appearance: none;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  border-color: var(--fg);
+  box-shadow: 0 0 0 3px rgba(26,26,24,0.06);
+}
+
+.form-group input.input-error,
+.form-group select.input-error,
+.form-group textarea.input-error {
+  border-color: #d94f4f;
+  box-shadow: 0 0 0 3px rgba(217,79,79,0.08);
+}
+
+.form-group textarea { resize: vertical; min-height: 100px; }
+
+.field-error {
+  display: none;
+  font-size: 0.75rem;
+  color: #d94f4f;
+  margin-top: 0.35rem;
+}
+
+.global-error {
+  background: rgba(217,79,79,0.07);
+  border: 1px solid rgba(217,79,79,0.3);
+  color: #d94f4f;
+  padding: 0.7rem 1rem;
+  border-radius: 3px;
+  font-size: 0.82rem;
+  margin-bottom: 1rem;
+}
+
+/* ─── CONFIRMATION ──────────────────── */
+.success-icon {
+  width: 64px; height: 64px;
+  border-radius: 50%;
+  background: rgba(0,180,100,0.1);
+  border: 2px solid rgba(0,180,100,0.4);
+  color: #00b464;
+  font-size: 1.8rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1.5rem;
+}
+
 /* ─── RESPONSIVE ────────────────────── */
 @media (max-width: 900px) {
   .hero {
